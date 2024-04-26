@@ -11,6 +11,7 @@ import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoSav
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.EstadoCargaMasivaDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.InformacionPersonalDto;
 
+
 public interface ExpertoService {
 
     ExpertoResponseDto Crear(ExpertoSaveDto experto, BindingResult result);
@@ -22,8 +23,9 @@ public interface ExpertoService {
     EstadoCargaMasivaDto CargarExpertos(MultipartFile file);
     void EliminarFisico(Long id);
     void EliminarLogico(Long id);
-    List<ExpertoResponseDto> ListarExpertosActivos(String estado);
+    List<InformacionPersonalDto> ListarExpertosActivos(String estado);
     InformacionPersonalDto ObtenerExperto(String identificador);
+    
 
     
 }

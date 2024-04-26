@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoResponseDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoSaveDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.InformacionPersonalDto;
+import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.docente.LineaInvestigacionDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.services.experto.ExpertoService;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-import javax.sound.midi.MidiDevice.Info;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -42,6 +42,7 @@ public class ExpertoController {
 
     @PostMapping
     public ResponseEntity<ExpertoResponseDto> crear(@Valid @RequestBody ExpertoSaveDto experto, BindingResult result){
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(expertoService.Crear(experto, result));
     }
 
@@ -88,7 +89,7 @@ public class ExpertoController {
     }
 
     @GetMapping("/listar/{estado}")
-    public ResponseEntity<List<ExpertoResponseDto>> listarExpertosActivos(@PathVariable String estado){
+    public ResponseEntity<List<InformacionPersonalDto>> listarExpertosActivos(@PathVariable String estado){
         return ResponseEntity.ok(expertoService.ListarExpertosActivos(estado));
     }
 
@@ -96,6 +97,13 @@ public class ExpertoController {
     public ResponseEntity<InformacionPersonalDto> obtenerExperto(@PathVariable String identificador){
         return ResponseEntity.ok(expertoService.ObtenerExperto(identificador));
     }
+
+    // @GetMapping("/listar/lineas-investigacion/")
+    // public ResponseEntity<List<LineaInvestigacionDto>> getLineasInvestigacion() {
+    //     return ResponseEntity.ok(expertoService.getLineasInvestigacion());
+    //     return new String();
+    // }
+    
     
 
 

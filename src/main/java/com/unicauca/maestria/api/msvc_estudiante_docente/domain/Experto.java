@@ -39,8 +39,6 @@ public class Experto {
 
     private String grupoinvexp;
 
-    private String lineainvexp;
-
     private String observacionexp;
 
     @Enumerated(EnumType.STRING)
