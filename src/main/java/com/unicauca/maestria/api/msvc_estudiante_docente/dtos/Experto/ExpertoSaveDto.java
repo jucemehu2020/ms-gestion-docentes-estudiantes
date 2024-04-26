@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,8 +28,8 @@ public class ExpertoSaveDto {
     private String tituloexper;
     @NotBlank @Size(max = 50)
     private String universidadtitexp;
-    @NotBlank @Size(max = 30)
-    private String copiadocidentidad;
+    // @NotBlank @Size(max = 30)
+    // private String copiadocidentidad;
     @NotBlank @Size(max = 50)
     private String universidadexp;
     @NotBlank @Size(max = 50)
@@ -36,14 +37,14 @@ public class ExpertoSaveDto {
     @NotBlank @Size(max = 50)
     private String grupoinvexp;
 
-    @NotBlank
-    private List<Long> lineaInvestigacion;
+    @NotEmpty
+    private List<Long> idsLineaInvestigacion;
 
     @NotBlank @Size(max = 50)
     private String observacionexp;
 
     public ExpertoSaveDto() {
-        lineaInvestigacion = new ArrayList<>();
+        idsLineaInvestigacion = new ArrayList<>();
         
     }
 

@@ -71,7 +71,6 @@ public class ExpertoServiceImpl implements ExpertoService {
     @Override
     @Transactional
     public ExpertoResponseDto Crear(ExpertoSaveDto experto, BindingResult result) {
-        System.err.println(experto.toString());
         if (result.hasErrors()) {
             throw new FieldErrorException(result);
         }
@@ -82,7 +81,7 @@ public class ExpertoServiceImpl implements ExpertoService {
         }
 
         Experto expertoBD = expertoRepository.save(expertoSaveMapper.toEntity(experto));
-        asignarLineasInvestigacionExperto(expertoBD, experto.getLineaInvestigacion());
+        asignarLineasInvestigacionExperto(expertoBD, experto.getIdsLineaInvestigacion());
 
         // expertoBD.setPersona(personaRepository.findById(experto.getIdPersona()).orElseThrow(()
         // -> new NotFoundException("Persona no encontrada")));
@@ -130,7 +129,7 @@ public class ExpertoServiceImpl implements ExpertoService {
             throw new FieldUniqueException(validacionCamposUnicos);
         }
 
-        actualizarinformacionExperto(experto, expertoBD, expertoSaveDto.getLineaInvestigacion());
+        actualizarinformacionExperto(experto, expertoBD, expertoSaveDto.getIdsLineaInvestigacion());
         Experto expertoSave = expertoRepository.save(expertoBD);
         return crearExpertoResposeDto(expertoSave);
     }
@@ -236,7 +235,7 @@ public class ExpertoServiceImpl implements ExpertoService {
     private ExpertoSaveDto crearExperto(Row rowExperto) {
         String tituloexper = rowExperto.getCell(5).getStringCellValue();
         String universidadtitexp = rowExperto.getCell(6).getStringCellValue();
-        String copiadocidentidad = rowExperto.getCell(7).getStringCellValue();
+        // String copiadocidentidad = rowExperto.getCell(7).getStringCellValue();
         String universidadexp = rowExperto.getCell(8).getStringCellValue();
         String facultadexp = rowExperto.getCell(9).getStringCellValue();
         String grupoinvexp = rowExperto.getCell(10).getStringCellValue();
@@ -246,7 +245,7 @@ public class ExpertoServiceImpl implements ExpertoService {
                 .persona(crearPersona(rowExperto))
                 .tituloexper(tituloexper)
                 .universidadtitexp(universidadtitexp)
-                .copiadocidentidad(copiadocidentidad)
+                // .copiadocidentidad(copiadocidentidad)
                 .universidadexp(universidadexp)
                 .facultadexp(facultadexp)
                 .grupoinvexp(grupoinvexp)
