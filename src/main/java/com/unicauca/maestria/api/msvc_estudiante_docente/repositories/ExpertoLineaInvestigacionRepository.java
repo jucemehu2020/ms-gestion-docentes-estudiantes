@@ -11,9 +11,13 @@ import com.unicauca.maestria.api.msvc_estudiante_docente.domain.LineaInvestigaci
 
 public interface ExpertoLineaInvestigacionRepository extends JpaRepository<ExpertoLineaInvestigacion, Long>{
 
-	@Query("SELECT e.id FROM ExpertoLineaInvestigacion e where e.experto.id = ?1")
-	public List<Long> findAllByExperto(Long idExperto);
-	
+	// @Query("SELECT e.id FROM ExpertoLineaInvestigacion e where e.experto.id = ?1")
+	// public List<Long> findAllByExperto(Long idExperto);
+	@Query("SELECT e.lineaInvestigacion.id FROM ExpertoLineaInvestigacion e WHERE e.experto.id = ?1")
+	public List<Long> findAllLineaInvestigacionIdsByExperto(Long idExperto);
+
+
+
 	@Query("SELECT e.lineaInvestigacion FROM ExpertoLineaInvestigacion e where e.experto.id = ?1")
-	List<LineaInvestigacion> findAllLineasInvByIdExperto(Long idExperto);
+	public List<LineaInvestigacion> findAllLineasInvByIdExperto(Long idExperto);
 }

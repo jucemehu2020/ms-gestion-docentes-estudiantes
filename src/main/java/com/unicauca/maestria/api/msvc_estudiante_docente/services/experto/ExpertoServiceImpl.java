@@ -273,8 +273,8 @@ public class ExpertoServiceImpl implements ExpertoService {
     }
 
     private void cargarLineasInvestigacionExperto(Row row) {
-        String cod =row.getCell(0).getStringCellValue();
-        Long identificacion =Long.parseLong(cod);
+        // String cod =
+        Long identificacion =(long)row.getCell(0).getNumericCellValue();
         Long idLineaInvestigacion =(long)row.getCell(1).getNumericCellValue();
         ExpertoLineaInvestigacion expertoLineaInvestigacion = ExpertoLineaInvestigacion.builder()
                 .lineaInvestigacion(lineaInvestigacionRepository.findById(idLineaInvestigacion).orElse(null))
@@ -353,14 +353,22 @@ public class ExpertoServiceImpl implements ExpertoService {
 	}
 
     private void actualizarinformacionExperto(Experto experto, Experto expertoBD, List<Long> idsLineaInvExperto) {
-        
-        List<Long> idsLineaInvExpertoBD = expertoLineaInvestigacionRepository.findAllByExperto(expertoBD.getId());
+        System.out.println("idsLineaInvExperto: "+idsLineaInvExperto);
+        System.out.println("experto"+expertoBD.getId());
+        List<Long> idsLineaInvExpertoBD = expertoLineaInvestigacionRepository.findAllLineaInvestigacionIdsByExperto(expertoBD.getId());
+        System.out.println("idsLineaInvExpertoBD: "+idsLineaInvExpertoBD);
+
+        List<LineaInvestigacion> lineasInvestigacion = expertoLineaInvestigacionRepository.findAllLineasInvByIdExperto(expertoBD.getId());
+        System.out.println("lineasInvestigacion: "+lineasInvestigacion);
 
 		 List<Long> idsLineasInvExpertoAEliminar = idsLineaInvExpertoBD.stream()
 				.filter(IdlineaInvExpertoDB->!idsLineaInvExperto.contains(IdlineaInvExpertoDB)).toList();
 		 
 		 List<Long> idsLineasInvExpertoAsignar = idsLineaInvExperto.stream()
 				.filter(idLineaInvExperto->!idsLineaInvExpertoBD.contains(idLineaInvExperto)).toList();
+            
+        System.out.println("idsLineasInvExpertoAsignar: "+idsLineasInvExpertoAsignar);
+        System.out.println("idsLineasInvExpertoEliminar: "+idsLineasInvExpertoAEliminar);
 		
 		asignarLineasInvestigacionExperto(expertoBD, idsLineasInvExpertoAsignar);
 		expertoLineaInvestigacionRepository.deleteAllById(idsLineasInvExpertoAEliminar);

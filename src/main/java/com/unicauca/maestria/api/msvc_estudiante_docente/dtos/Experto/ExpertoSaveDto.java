@@ -37,7 +37,6 @@ public class ExpertoSaveDto {
     @NotBlank @Size(max = 50)
     private String grupoinvexp;
 
-    @NotEmpty
     private List<Long> idsLineaInvestigacion;
 
     @NotBlank @Size(max = 50)
