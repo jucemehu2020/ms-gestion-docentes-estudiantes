@@ -1,11 +1,11 @@
-package com.unicauca.maestria.api.msvc_estudiante_docente.repositories;
+package com.unicauca.maestria.api.msvc_estudiante_docente.repositories.experto;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.EstadoPersona;
-import com.unicauca.maestria.api.msvc_estudiante_docente.domain.Experto;
+import com.unicauca.maestria.api.msvc_estudiante_docente.domain.Experto.Experto;
 
 
 public interface ExpertoRepository extends JpaRepository<Experto, Long>{
@@ -24,9 +24,12 @@ public interface ExpertoRepository extends JpaRepository<Experto, Long>{
 
     public boolean existsByPersona(long idPersona);
 
-    @Query("SELECT e FROM Experto e join e.persona p WHERE "
-            + "e.estado = ?1")
-    public List<Experto> findAllActiveExperto(EstadoPersona estado);
+//     @Query("SELECT e FROM Experto e join e.persona p WHERE "
+//             + "e.estado = ?1")
+//     public List<Experto> findAllActiveExperto(EstadoPersona estado);
+        @Query("SELECT e FROM Experto e join e.persona p WHERE"
+        +" e.estado = ?1 ORDER BY p.nombre, p.apellido")
+        public List<Experto> findAllActiveExperto(EstadoPersona estado);        
 
     @Query("""
             SELECT e FROM Experto e 

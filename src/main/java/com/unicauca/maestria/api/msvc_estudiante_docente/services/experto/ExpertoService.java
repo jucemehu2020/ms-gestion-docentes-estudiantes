@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.EstadoPersona;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoResponseDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoSaveDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.EstadoCargaMasivaDto;
@@ -19,12 +20,15 @@ public interface ExpertoService {
     Page<ExpertoResponseDto> ListarPaginado(Pageable page);
     ExpertoResponseDto BuscarPorId(Long id);
     ExpertoResponseDto Actualizar(Long id, ExpertoSaveDto expertoSaveDto, BindingResult result);
+    void actualizarEstado(Long id);
     List<ExpertoResponseDto> FiltrarExpertos(String terminoBusqueda);
     EstadoCargaMasivaDto CargarExpertos(MultipartFile file);
     void EliminarFisico(Long id);
     void EliminarLogico(Long id);
-    List<InformacionPersonalDto> ListarExpertosActivos(String estado);
+    List<ExpertoResponseDto> ListarExpertosActivos(String estado);
     InformacionPersonalDto ObtenerExperto(String identificador);
+
+    
     
 
     

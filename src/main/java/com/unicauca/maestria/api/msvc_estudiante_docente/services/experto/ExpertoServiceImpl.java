@@ -30,27 +30,27 @@ import org.springframework.web.multipart.MultipartFile;
 import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.EstadoPersona;
 import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.Genero;
 import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.TipoIdentificacion;
-import com.unicauca.maestria.api.msvc_estudiante_docente.domain.Experto;
-import com.unicauca.maestria.api.msvc_estudiante_docente.domain.ExpertoLineaInvestigacion;
-import com.unicauca.maestria.api.msvc_estudiante_docente.domain.LineaInvestigacion;
 import com.unicauca.maestria.api.msvc_estudiante_docente.domain.Persona;
+import com.unicauca.maestria.api.msvc_estudiante_docente.domain.Experto.Experto;
+import com.unicauca.maestria.api.msvc_estudiante_docente.domain.Experto.ExpertoLineaInvestigacion;
+import com.unicauca.maestria.api.msvc_estudiante_docente.domain.lineaInvestigacion.LineaInvestigacion;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.CamposUnicosExpertoDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoResponseDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.Experto.ExpertoSaveDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.EstadoCargaMasivaDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.InformacionPersonalDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.PersonaDto;
-import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.docente.LineaInvestigacionDto;
+import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.lineaInvestigacion.LineaInvestigacionDto;
 import com.unicauca.maestria.api.msvc_estudiante_docente.exceptions.FieldErrorException;
 import com.unicauca.maestria.api.msvc_estudiante_docente.exceptions.FieldUniqueException;
 import com.unicauca.maestria.api.msvc_estudiante_docente.exceptions.ResourceNotFoundException;
-import com.unicauca.maestria.api.msvc_estudiante_docente.mappers.ExpertoResponseMapper;
-import com.unicauca.maestria.api.msvc_estudiante_docente.mappers.ExpertoSaveMapper;
-import com.unicauca.maestria.api.msvc_estudiante_docente.mappers.LineaInvestigacionMapper;
-import com.unicauca.maestria.api.msvc_estudiante_docente.repositories.ExpertoLineaInvestigacionRepository;
-import com.unicauca.maestria.api.msvc_estudiante_docente.repositories.ExpertoRepository;
-import com.unicauca.maestria.api.msvc_estudiante_docente.repositories.LineaInvestigacionRepository;
+import com.unicauca.maestria.api.msvc_estudiante_docente.mappers.experto.ExpertoResponseMapper;
+import com.unicauca.maestria.api.msvc_estudiante_docente.mappers.experto.ExpertoSaveMapper;
+import com.unicauca.maestria.api.msvc_estudiante_docente.mappers.lineasInvestigacion.LineaInvestigacionMapper;
 import com.unicauca.maestria.api.msvc_estudiante_docente.repositories.PersonaRepository;
+import com.unicauca.maestria.api.msvc_estudiante_docente.repositories.experto.ExpertoLineaInvestigacionRepository;
+import com.unicauca.maestria.api.msvc_estudiante_docente.repositories.experto.ExpertoRepository;
+import com.unicauca.maestria.api.msvc_estudiante_docente.repositories.lineaInvestigacion.LineaInvestigacionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -64,8 +64,8 @@ public class ExpertoServiceImpl implements ExpertoService {
     private final ExpertoResponseMapper expertoResponseMapper;
     private final InformacionUnicaExperto informacionUnicaExperto;
     private final ExpertoLineaInvestigacionRepository expertoLineaInvestigacionRepository;
-    private final LineaInvestigacionRepository lineaInvestigacionRepository;
-    private final LineaInvestigacionMapper lineaInvestigacionMapper;
+    // private final LineaInvestigacionRepository lineaInvestigacionRepository;
+    // private final LineaInvestigacionMapper lineaInvestigacionMapper;
     private final Validator validator;
 
     @Override
@@ -81,7 +81,7 @@ public class ExpertoServiceImpl implements ExpertoService {
         }
 
         Experto expertoBD = expertoRepository.save(expertoSaveMapper.toEntity(experto));
-        asignarLineasInvestigacionExperto(expertoBD, experto.getIdsLineaInvestigacion());
+        // asignarLineasInvestigacionExperto(expertoBD, experto.getIdsLineaInvestigacion());
 
         // expertoBD.setPersona(personaRepository.findById(experto.getIdPersona()).orElseThrow(()
         // -> new NotFoundException("Persona no encontrada")));
@@ -136,6 +136,17 @@ public class ExpertoServiceImpl implements ExpertoService {
 
     @Override
     @Transactional
+    public void actualizarEstado(Long id) {
+        Experto experto = expertoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Experto no encontrado"));
+
+                EstadoPersona estado = experto.getEstado() == EstadoPersona.ACTIVO ? EstadoPersona.INACTIVO : EstadoPersona.ACTIVO;
+        experto.setEstado(estado);
+        expertoRepository.save(experto);
+    }
+    
+    @Override
+    @Transactional
     public EstadoCargaMasivaDto CargarExpertos(MultipartFile file) {
 
         EstadoCargaMasivaDto estadoCargaMasivaDto = null;
@@ -171,8 +182,8 @@ public class ExpertoServiceImpl implements ExpertoService {
                     .estructuraIncorrecta(expertosEstructuraIncorrecta)
                     .build();
 
-            StreamSupport.stream(sheetLineaInvestigacion.spliterator(),false)
-            .skip(1).forEach(this::cargarLineasInvestigacionExperto);
+            StreamSupport.stream(sheetLineaInvestigacion.spliterator(), false)
+                    .skip(1).forEach(this::cargarLineasInvestigacionExperto);
             //
         } catch (IOException e) {
             e.printStackTrace();
@@ -217,20 +228,20 @@ public class ExpertoServiceImpl implements ExpertoService {
         return informacionUnicaExperto.apply(expertoSaveDto);
     }
 
-    private void asignarLineasInvestigacionExperto(Experto experto,List<Long> idsLineaInvestigacion) {
-		List<LineaInvestigacion> lineasInvestigacion = BuscarlineasInvestigacionExperto(idsLineaInvestigacion);
-		lineasInvestigacion.forEach(li->{
-			ExpertoLineaInvestigacion expertoLineaInvestigacion = ExpertoLineaInvestigacion.builder()
-					.experto(experto)
-					.lineaInvestigacion(li)
-					.build();
-			expertoLineaInvestigacionRepository.save(expertoLineaInvestigacion);
-		});
-	}
+    // private void asignarLineasInvestigacionExperto(Experto experto, List<Long> idsLineaInvestigacion) {
+    //     List<LineaInvestigacion> lineasInvestigacion = BuscarlineasInvestigacionExperto(idsLineaInvestigacion);
+    //     lineasInvestigacion.forEach(li -> {
+    //         ExpertoLineaInvestigacion expertoLineaInvestigacion = ExpertoLineaInvestigacion.builder()
+    //                 .experto(experto)
+    //                 .lineaInvestigacion(li)
+    //                 .build();
+    //         expertoLineaInvestigacionRepository.save(expertoLineaInvestigacion);
+    //     });
+    // }
 
-    private List<LineaInvestigacion> BuscarlineasInvestigacionExperto(List<Long> idsLineaInvestigacion) {
-		return lineaInvestigacionRepository.findAllById(idsLineaInvestigacion);
-	}
+    // private List<LineaInvestigacion> BuscarlineasInvestigacionExperto(List<Long> idsLineaInvestigacion) {
+    //     return lineaInvestigacionRepository.findAllById(idsLineaInvestigacion);
+    // }
 
     private ExpertoSaveDto crearExperto(Row rowExperto) {
         String tituloexper = rowExperto.getCell(5).getStringCellValue();
@@ -274,33 +285,34 @@ public class ExpertoServiceImpl implements ExpertoService {
 
     private void cargarLineasInvestigacionExperto(Row row) {
         // String cod =
-        Long identificacion =(long)row.getCell(0).getNumericCellValue();
-        Long idLineaInvestigacion =(long)row.getCell(1).getNumericCellValue();
+        Long identificacion = (long) row.getCell(0).getNumericCellValue();
+        Long idLineaInvestigacion = (long) row.getCell(1).getNumericCellValue();
         ExpertoLineaInvestigacion expertoLineaInvestigacion = ExpertoLineaInvestigacion.builder()
-                .lineaInvestigacion(lineaInvestigacionRepository.findById(idLineaInvestigacion).orElse(null))
+                // .lineaInvestigacion(lineaInvestigacionRepository.findById(idLineaInvestigacion).orElse(null))
                 .experto(expertoRepository.findByIdentificacion(identificacion))
                 .build();
 
-        List<ExpertoLineaInvestigacion> expertoLineaBD = expertoLineaInvestigacionRepository.findAll().stream().toList();
-        if(expertoLineaBD.isEmpty()) {
+        List<ExpertoLineaInvestigacion> expertoLineaBD = expertoLineaInvestigacionRepository.findAll().stream()
+                .toList();
+        if (expertoLineaBD.isEmpty()) {
             expertoLineaInvestigacionRepository.save(expertoLineaInvestigacion);
-        }else {
-            Long idexp=expertoRepository.findByIdentificacion(identificacion).getId();
-            long count = expertoLineaBD.stream().filter(dl->dl.getExperto().getId().equals(idexp) && dl.getLineaInvestigacion().getId().equals(idLineaInvestigacion)).count();
-            if(count==0) {
+        } else {
+            Long idexp = expertoRepository.findByIdentificacion(identificacion).getId();
+            long count = expertoLineaBD.stream().filter(dl -> dl.getExperto().getId().equals(idexp)
+                    && dl.getLineaInvestigacion().getId().equals(idLineaInvestigacion)).count();
+            if (count == 0) {
                 expertoLineaInvestigacionRepository.save(expertoLineaInvestigacion);
             }
         }
-        
-        
+
     }
 
     private ExpertoResponseDto crearExpertoResposeDto(Experto experto) {
-        List<LineaInvestigacionDto> lineaInvestigacion = 
-        lineaInvestigacionMapper.toDtoList(expertoLineaInvestigacionRepository.findAllLineasInvByIdExperto(experto.getId()));
+        // List<LineaInvestigacionDto> lineaInvestigacion = lineaInvestigacionMapper
+        //         .toDtoList(expertoLineaInvestigacionRepository.findAllLineasInvByIdExperto(experto.getId()));
 
         ExpertoResponseDto expertoResponseDto = expertoResponseMapper.toDto(experto);
-        expertoResponseDto.setLineasInvestigacion(lineaInvestigacion);
+        // expertoResponseDto.setLineasInvestigacion(lineaInvestigacion);
         return expertoResponseDto;
         // return ExpertoResponseDto.builder()
         // .id(experto.getId())
@@ -348,32 +360,32 @@ public class ExpertoServiceImpl implements ExpertoService {
                 }));
 
     }
-    private <T> String mensajeException(String nombreCampo,T valorCampo) {
-	    return "Campo único, ya existe un docente con la información: " + nombreCampo + ": " + valorCampo;
-	}
+
+    private <T> String mensajeException(String nombreCampo, T valorCampo) {
+        return "Campo único, ya existe un Experto con la información: " + nombreCampo + ": " + valorCampo;
+    }
 
     private void actualizarinformacionExperto(Experto experto, Experto expertoBD, List<Long> idsLineaInvExperto) {
-        System.out.println("idsLineaInvExperto: "+idsLineaInvExperto);
-        System.out.println("experto"+expertoBD.getId());
-        List<Long> idsLineaInvExpertoBD = expertoLineaInvestigacionRepository.findAllLineaInvestigacionIdsByExperto(expertoBD.getId());
-        System.out.println("idsLineaInvExpertoBD: "+idsLineaInvExpertoBD);
+        List<Long> idsLineaInvExpertoBD = expertoLineaInvestigacionRepository
+                .findAllLineaInvestigacionIdsByExperto(expertoBD.getId());
 
-        List<LineaInvestigacion> lineasInvestigacion = expertoLineaInvestigacionRepository.findAllLineasInvByIdExperto(expertoBD.getId());
-        System.out.println("lineasInvestigacion: "+lineasInvestigacion);
+        List<LineaInvestigacion> lineasInvestigacion = expertoLineaInvestigacionRepository
+                .findAllLineasInvByIdExperto(expertoBD.getId());
 
-		 List<Long> idsLineasInvExpertoAEliminar = idsLineaInvExpertoBD.stream()
-				.filter(IdlineaInvExpertoDB->!idsLineaInvExperto.contains(IdlineaInvExpertoDB)).toList();
-		 
-		 List<Long> idsLineasInvExpertoAsignar = idsLineaInvExperto.stream()
-				.filter(idLineaInvExperto->!idsLineaInvExpertoBD.contains(idLineaInvExperto)).toList();
-            
-        System.out.println("idsLineasInvExpertoAsignar: "+idsLineasInvExpertoAsignar);
-        System.out.println("idsLineasInvExpertoEliminar: "+idsLineasInvExpertoAEliminar);
-		
-		asignarLineasInvestigacionExperto(expertoBD, idsLineasInvExpertoAsignar);
-		expertoLineaInvestigacionRepository.deleteAllById(idsLineasInvExpertoAEliminar);
-        
-        //falta agregar id de experto
+        List<Long> idsLineasInvExpertoAEliminar = idsLineaInvExpertoBD.stream()
+                .filter(IdlineaInvExpertoDB -> !idsLineaInvExperto.contains(IdlineaInvExpertoDB)).toList();
+
+        List<Long> idsLineasInvExpertoAsignar = idsLineaInvExperto.stream()
+                .filter(idLineaInvExperto -> !idsLineaInvExpertoBD.contains(idLineaInvExperto)).toList();
+
+        //   asignarLineasInvestigacionExperto(expertoBD, idsLineasInvExpertoAsignar);
+
+        for (Long idLinea : idsLineasInvExpertoAEliminar) {
+            expertoLineaInvestigacionRepository.deleteByExpertoAndLineaInvestigacion(expertoBD.getId(), idLinea);
+
+        }
+
+        // falta agregar id de experto
         expertoBD.setPersona(experto.getPersona());
         expertoBD.setTituloexper(experto.getTituloexper());
         expertoBD.setUniversidadtitexp(experto.getUniversidadtitexp());
@@ -385,51 +397,51 @@ public class ExpertoServiceImpl implements ExpertoService {
     }
 
     @Override
-    public List<InformacionPersonalDto> ListarExpertosActivos(String estado) {
-        List<Experto> expertosActivos = expertoRepository.findAllActiveExperto(EstadoPersona.valueOf(estado));
+    public List<ExpertoResponseDto> ListarExpertosActivos(String estado) {
 
-        return expertosToInformacionPersonal(expertosActivos);
+        List<ExpertoResponseDto> expertosActivos = expertoRepository.findAllActiveExperto(EstadoPersona.valueOf(estado))
+                .stream()
+                .map(this::crearExpertoResposeDto).toList();
 
+        return expertosActivos;
 
         // return expertoRepository.findAllActiveExperto(EstadoPersona.valueOf(estado))
-        //         .stream()
-        //         .map(
-        //                 experto -> ExpertoResponseDto.builder()
-        //                         .id(experto.getId())
-        //                         .persona(mapToDto(experto.getPersona()))
-        //                         .tituloexper(experto.getTituloexper())
-        //                         .universidadtitexp(experto.getUniversidadtitexp())
-        //                         .copiadocidentidad(experto.getCopiadocidentidad())
-        //                         .universidadexp(experto.getUniversidadexp())
-        //                         .facultadexp(experto.getFacultadexp())
-        //                         .grupoinvexp(experto.getGrupoinvexp())
-        //                         .lineainvexp(experto.getLineainvexp())
-        //                         .observacionexp(experto.getObservacionexp())
-        //                         .build())
-        //         .collect(Collectors.toList());
+        // .stream()
+        // .map(
+        // experto -> ExpertoResponseDto.builder()
+        // .id(experto.getId())
+        // .persona(mapToDto(experto.getPersona()))
+        // .tituloexper(experto.getTituloexper())
+        // .universidadtitexp(experto.getUniversidadtitexp())
+        // .copiadocidentidad(experto.getCopiadocidentidad())
+        // .universidadexp(experto.getUniversidadexp())
+        // .facultadexp(experto.getFacultadexp())
+        // .grupoinvexp(experto.getGrupoinvexp())
+        // .lineainvexp(experto.getLineainvexp())
+        // .observacionexp(experto.getObservacionexp())
+        // .build())
+        // .collect(Collectors.toList());
     }
 
+    private List<InformacionPersonalDto> expertosToInformacionPersonal(List<Experto> expertos) {
+        List<InformacionPersonalDto> iPersonalDtos = expertos.stream()
+                .map(experto -> {
+                    InformacionPersonalDto iPersonalDto = new InformacionPersonalDto();
+                    Persona persona = experto.getPersona();
+                    iPersonalDto.setId(experto.getId().intValue());
+                    iPersonalDto.setNombres(persona.getNombre());
+                    iPersonalDto.setApellidos(persona.getApellido());
+                    iPersonalDto.setCorreo(persona.getCorreoElectronico());
+                    iPersonalDto.setCelular(persona.getTelefono());
+                    iPersonalDto.setTipoDocumento(persona.getTipoIdentificacion().obtenerAbreviatura());
+                    iPersonalDto.setNumeroDocumento(persona.getIdentificacion().toString());
 
-    private List<InformacionPersonalDto> expertosToInformacionPersonal(List<Experto> expertos){
-		List<InformacionPersonalDto> iPersonalDtos = expertos.stream()
-        .map(experto -> {
-			InformacionPersonalDto iPersonalDto = new InformacionPersonalDto();
-			Persona persona = experto.getPersona();
-			iPersonalDto.setId(experto.getId().intValue());
-			iPersonalDto.setNombres(persona.getNombre());
-			iPersonalDto.setApellidos(persona.getApellido());
-			iPersonalDto.setCorreo(persona.getCorreoElectronico());
-			iPersonalDto.setCelular(persona.getTelefono());
-			iPersonalDto.setTipoDocumento(persona.getTipoIdentificacion().obtenerAbreviatura());
-			iPersonalDto.setNumeroDocumento(persona.getIdentificacion().toString());
-
-			return iPersonalDto;
-    	})
-    	.collect(Collectors.toList());
+                    return iPersonalDto;
+                })
+                .collect(Collectors.toList());
 
         return iPersonalDtos;
     }
-
 
     private PersonaDto mapToDto(Persona persona) {
         return PersonaDto.builder()
@@ -451,27 +463,28 @@ public class ExpertoServiceImpl implements ExpertoService {
         List<Experto> expertosActivos = new ArrayList<>();
 
         try {
-			Integer id = Integer.parseInt(identificador);
-			expertosActivos.add(expertoRepository.findById(id.longValue()).get());	
-		} catch (NumberFormatException e) {
-			expertosActivos.add(expertoRepository.findByCorreo(identificador));
-		}
-		return expertosToInformacionPersonal(expertosActivos).get(0);
+            Integer id = Integer.parseInt(identificador);
+            expertosActivos.add(expertoRepository.findById(id.longValue()).get());
+        } catch (NumberFormatException e) {
+            expertosActivos.add(expertoRepository.findByCorreo(identificador));
+        }
+        return expertosToInformacionPersonal(expertosActivos).get(0);
 
         // if (identificador.contains("@")) {
-        //     experto = expertoRepository.findByCorreo(identificador);
+        // experto = expertoRepository.findByCorreo(identificador);
         // } else {
-        //     experto = expertoRepository.findByIdentificacion(Long.parseLong(identificador));
+        // experto =
+        // expertoRepository.findByIdentificacion(Long.parseLong(identificador));
         // }
         // return InformacionPersonalDto.builder()
-        //         .id(experto.getId().intValue())
-        //         .numeroDocumento(experto.getPersona().getIdentificacion().toString())
-        //         .nombres(experto.getPersona().getNombre())
-        //         .apellidos(experto.getPersona().getApellido())
-        //         .correo(experto.getPersona().getCorreoElectronico())
-        //         .celular(experto.getPersona().getTelefono())
-        //         .tipoDocumento(experto.getPersona().getTipoIdentificacion().obtenerAbreviatura())
-        //         .build();
+        // .id(experto.getId().intValue())
+        // .numeroDocumento(experto.getPersona().getIdentificacion().toString())
+        // .nombres(experto.getPersona().getNombre())
+        // .apellidos(experto.getPersona().getApellido())
+        // .correo(experto.getPersona().getCorreoElectronico())
+        // .celular(experto.getPersona().getTelefono())
+        // .tipoDocumento(experto.getPersona().getTipoIdentificacion().obtenerAbreviatura())
+        // .build();
 
     }
 

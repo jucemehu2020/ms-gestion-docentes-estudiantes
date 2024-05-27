@@ -1,4 +1,4 @@
-package com.unicauca.maestria.api.msvc_estudiante_docente.domain;
+package com.unicauca.maestria.api.msvc_estudiante_docente.domain.Experto;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.unicauca.maestria.api.msvc_estudiante_docente.domain.lineaInvestigacion.LineaInvestigacion;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

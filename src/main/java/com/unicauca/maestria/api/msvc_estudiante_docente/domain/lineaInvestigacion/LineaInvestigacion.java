@@ -1,31 +1,50 @@
-package com.unicauca.maestria.api.msvc_estudiante_docente.domain;
+package com.unicauca.maestria.api.msvc_estudiante_docente.domain.lineaInvestigacion;
 
 import java.util.Objects;
 
+
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.EstadoPersona;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+// import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter @ToString   @NoArgsConstructor @AllArgsConstructor @Builder
-@Entity @Table(name = "lineas_investigacion")
+// @Data
+@Setter
+@Getter
+@ToString
+@AllArgsConstructor
+@Entity
+@Table(name = "lineas_investigacion")
 public class LineaInvestigacion {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	private String titulo;
-	
-	private String categoria;
 
+	private String titulo;
+
+	@ManyToOne
+	@JoinColumn(name = "id_categoria")
+	private CategoriaLinea categoria;
+
+	@Enumerated(EnumType.STRING)
+	private EstadoPersona estado;
+
+	public LineaInvestigacion() {
+		estado = EstadoPersona.ACTIVO;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -38,6 +57,5 @@ public class LineaInvestigacion {
 		LineaInvestigacion other = (LineaInvestigacion) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
+
 }

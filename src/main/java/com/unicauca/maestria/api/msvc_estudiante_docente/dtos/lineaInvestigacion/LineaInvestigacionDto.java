@@ -1,6 +1,7 @@
-package com.unicauca.maestria.api.msvc_estudiante_docente.dtos.docente;
+package com.unicauca.maestria.api.msvc_estudiante_docente.dtos.lineaInvestigacion;
 
-import javax.validation.constraints.NotBlank;
+
+import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.EstadoPersona;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +14,9 @@ public class LineaInvestigacionDto {
 	
 	private Long id;
 	
-	@NotBlank
 	private String titulo;
 	
-	@NotBlank
-	private String categoria;
+	private CategoriaResponseDto categoria;
+
+	private EstadoPersona estado;
 }

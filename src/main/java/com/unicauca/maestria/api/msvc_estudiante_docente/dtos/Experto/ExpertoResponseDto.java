@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.unicauca.maestria.api.msvc_estudiante_docente.common.enums.EstadoPersona;
 import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.common.PersonaDto;
-import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.docente.LineaInvestigacionDto;
+import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.lineaInvestigacion.LineaInvestigacionDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
