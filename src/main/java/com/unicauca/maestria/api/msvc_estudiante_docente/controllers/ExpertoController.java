@@ -51,9 +51,9 @@ public class ExpertoController {
     }
 
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<?> actualizarEstado(@PathVariable Long id) {
-        expertoService.actualizarEstado(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> actualizarEstado(@PathVariable Long id) {
+        return ResponseEntity.ok(expertoService.actualizarEstado(id));
+      
     }
 
     @GetMapping("/{id}")

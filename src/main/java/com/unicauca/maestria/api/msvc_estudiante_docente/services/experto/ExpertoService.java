@@ -20,7 +20,7 @@ public interface ExpertoService {
     Page<ExpertoResponseDto> ListarPaginado(Pageable page);
     ExpertoResponseDto BuscarPorId(Long id);
     ExpertoResponseDto Actualizar(Long id, ExpertoSaveDto expertoSaveDto, BindingResult result);
-    void actualizarEstado(Long id);
+    String actualizarEstado(Long id);
     List<ExpertoResponseDto> FiltrarExpertos(String terminoBusqueda);
     EstadoCargaMasivaDto CargarExpertos(MultipartFile file);
     void EliminarFisico(Long id);

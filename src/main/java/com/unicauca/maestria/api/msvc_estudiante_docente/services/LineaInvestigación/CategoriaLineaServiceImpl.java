@@ -152,13 +152,14 @@ public class CategoriaLineaServiceImpl implements CategoriaLineaService {
 
     @Override
     @Transactional
-    public void actualizarEstado(Long id) {
+    public String actualizarEstado(Long id) {
         CategoriaLinea categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la categoria con el id: "));
 
         EstadoPersona estado = categoria.getEstado() == EstadoPersona.ACTIVO ? EstadoPersona.INACTIVO : EstadoPersona.ACTIVO;
         categoria.setEstado(estado);
         categoriaRepository.save(categoria);
+        return "Estado actualizado a " + estado;
     }
 
     // private Boolean ValidarCategoria(@Valid CategoriaLineasSaveDto

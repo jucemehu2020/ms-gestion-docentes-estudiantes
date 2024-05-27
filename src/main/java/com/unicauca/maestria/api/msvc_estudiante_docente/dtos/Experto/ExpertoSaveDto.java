@@ -30,7 +30,7 @@ public class ExpertoSaveDto {
     @Size(max = 250)
     private String universidadtitexp;
     // @NotBlank @Size(max = 30)
-    // private String copiadocidentidad;
+    private Long iddocidentidad;
     @NotBlank
     @Size(max = 250)
     private String universidadexp;

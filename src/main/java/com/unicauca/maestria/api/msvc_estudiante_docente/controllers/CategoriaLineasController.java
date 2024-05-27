@@ -54,9 +54,8 @@ public class CategoriaLineasController {
     }
 
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<?> actualizarEstado(@PathVariable Long id) {
-        categoriaLineaService.actualizarEstado(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> actualizarEstado(@PathVariable Long id) {
+        return ResponseEntity.ok(categoriaLineaService.actualizarEstado(id));
     }
 
     @GetMapping

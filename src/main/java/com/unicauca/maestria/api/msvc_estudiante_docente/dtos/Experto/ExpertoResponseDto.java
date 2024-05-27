@@ -19,7 +19,7 @@ public class ExpertoResponseDto {
     private PersonaDto persona;
     private String tituloexper;
     private String universidadtitexp;
-    private String copiadocidentidad;
+    private Long iddocidentidad;
     private String universidadexp;
     private String facultadexp;
     private String grupoinvexp;

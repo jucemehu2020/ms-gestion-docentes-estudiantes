@@ -17,8 +17,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -55,37 +53,12 @@ public class DocenteServiceImpl implements DocenteService {
 	private final PersonaRepository personaRepository;
 	private final DocenteRepository docenteRepository;
 	private final DocenteLineaInvestigacionRepository docenteLineaInvestigacionRepository;
-	// private final LineaInvestigacionRepository lineaInvestigacionRepository;
+	private final LineaInvestigacionRepository lineaInvestigacionRepository;
 	private final DocenteSaveMapper docenteSaveMapper;
 	private final DocenteResponseMapper DocenteResponseMapper;
-	@Lazy
-    @Autowired
 	private final LineaInvestigacionMapper lineaInvestigacionMapper;
 	private final InformacionUnicaDocente informacionUnicaDocente;
 	private final Validator validator;
-
-	@Autowired
-	public DocenteServiceImpl(
-			DocenteRepository docenteRepository,
-			DocenteLineaInvestigacionRepository docenteLineaInvestigacionRepository,
-			LineaInvestigacionRepository lineaInvestigacionRepository,
-			DocenteSaveMapper docenteSaveMapper,
-			DocenteResponseMapper docenteResponseMapper,
-			@Lazy LineaInvestigacionMapper lineaInvestigacionMapper,
-			InformacionUnicaDocente informacionUnicaDocente,
-			Validator validator,
-			PersonaRepository personaRepository
-			) {
-				this.personaRepository = personaRepository;	
-				this.docenteRepository = docenteRepository;
-				this.docenteLineaInvestigacionRepository = docenteLineaInvestigacionRepository;
-				// this.lineaInvestigacionRepository = lineaInvestigacionRepository;
-				this.docenteSaveMapper = docenteSaveMapper;
-				this.DocenteResponseMapper = docenteResponseMapper;
-				this.lineaInvestigacionMapper = lineaInvestigacionMapper;
-				this.informacionUnicaDocente = informacionUnicaDocente;
-				this.validator = validator;
-			}
 
 	@Override
 	@Transactional
@@ -192,8 +165,8 @@ public class DocenteServiceImpl implements DocenteService {
 					.existentes(docentesExistentes)
 					.estructuraIncorrecta(docentesEstructuraIncorrecta).build();
 
-			StreamSupport.stream(sheetLineaInvestigacion.spliterator(), false);
-					// .skip(1).forEach(this::cargarLineasInvestigacionDocente);
+			StreamSupport.stream(sheetLineaInvestigacion.spliterator(), false)
+					.skip(1).forEach(this::cargarLineasInvestigacionDocente);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -239,19 +212,19 @@ public class DocenteServiceImpl implements DocenteService {
 	}
 
 	private void asignarLineasInvestigacionDocente(Docente docente, List<Long> idsLineaInvestigacion) {
-		// List<LineaInvestigacion> lineasInvestigacion = BuscarlineasInvestigacionDocente(idsLineaInvestigacion);
-		// lineasInvestigacion.forEach(li -> {
-		// 	DocenteLineaInvestigacion docenteLineaInvestigacion = DocenteLineaInvestigacion.builder()
-		// 			.docente(docente)
-		// 			.lineaInvestigacion(li)
-		// 			.build();
-		// 	docenteLineaInvestigacionRepository.save(docenteLineaInvestigacion);
-		// });
+		List<LineaInvestigacion> lineasInvestigacion = BuscarlineasInvestigacionDocente(idsLineaInvestigacion);
+		lineasInvestigacion.forEach(li -> {
+			DocenteLineaInvestigacion docenteLineaInvestigacion = DocenteLineaInvestigacion.builder()
+					.docente(docente)
+					.lineaInvestigacion(li)
+					.build();
+			docenteLineaInvestigacionRepository.save(docenteLineaInvestigacion);
+		});
 	}
 
-	// private List<LineaInvestigacion> BuscarlineasInvestigacionDocente(List<Long> idsLineaInvestigacion) {
-	// 	return lineaInvestigacionRepository.findAllById(idsLineaInvestigacion);
-	// }
+	private List<LineaInvestigacion> BuscarlineasInvestigacionDocente(List<Long> idsLineaInvestigacion) {
+		return lineaInvestigacionRepository.findAllById(idsLineaInvestigacion);
+	}
 
 	private DocenteResponseDto crearDocenteReponseDto(Docente docente) {
 		List<LineaInvestigacionDto> lineasInvestigacion = lineaInvestigacionMapper
@@ -306,28 +279,28 @@ public class DocenteServiceImpl implements DocenteService {
 		return filtrarRow(codigoDocente, sheetTitulo, indice).map(this::crearTitulo).toList();
 	}
 
-	// private void cargarLineasInvestigacionDocente(Row row) {
+	private void cargarLineasInvestigacionDocente(Row row) {
 
-	// 	String codigoDocente = row.getCell(0).getStringCellValue();
-	// 	Long idLineaInvestigacion = (long) row.getCell(1).getNumericCellValue();
-	// 	DocenteLineaInvestigacion docenteLineaInvestigacion = DocenteLineaInvestigacion.builder()
-	// 			.lineaInvestigacion(lineaInvestigacionRepository.findById(idLineaInvestigacion).orElse(null))
-	// 			.docente(docenteRepository.findByCodigo(codigoDocente))
-	// 			.build();
+		String codigoDocente = row.getCell(0).getStringCellValue();
+		Long idLineaInvestigacion = (long) row.getCell(1).getNumericCellValue();
+		DocenteLineaInvestigacion docenteLineaInvestigacion = DocenteLineaInvestigacion.builder()
+				.lineaInvestigacion(lineaInvestigacionRepository.findById(idLineaInvestigacion).orElse(null))
+				.docente(docenteRepository.findByCodigo(codigoDocente))
+				.build();
 
-	// 	List<DocenteLineaInvestigacion> docenteLineaBD = docenteLineaInvestigacionRepository.findAll().stream()
-	// 			.toList();
-	// 	if (docenteLineaBD.isEmpty()) {
-	// 		docenteLineaInvestigacionRepository.save(docenteLineaInvestigacion);
-	// 	} else {
-	// 		long count = docenteLineaBD.stream().filter(dl -> dl.getDocente().getCodigo().equals(codigoDocente)
-	// 				&& dl.getLineaInvestigacion().getId().equals(idLineaInvestigacion)).count();
-	// 		if (count == 0) {
-	// 			docenteLineaInvestigacionRepository.save(docenteLineaInvestigacion);
-	// 		}
-	// 	}
+		List<DocenteLineaInvestigacion> docenteLineaBD = docenteLineaInvestigacionRepository.findAll().stream()
+				.toList();
+		if (docenteLineaBD.isEmpty()) {
+			docenteLineaInvestigacionRepository.save(docenteLineaInvestigacion);
+		} else {
+			long count = docenteLineaBD.stream().filter(dl -> dl.getDocente().getCodigo().equals(codigoDocente)
+					&& dl.getLineaInvestigacion().getId().equals(idLineaInvestigacion)).count();
+			if (count == 0) {
+				docenteLineaInvestigacionRepository.save(docenteLineaInvestigacion);
+			}
+		}
 
-	// }
+	}
 
 	private Stream<Row> filtrarRow(String codigoDocente, Sheet sheetLineaInvestigacion, int indice) {
 		Predicate<Row> codigosIguales = row -> row.getCell(indice).getStringCellValue().equals(codigoDocente);

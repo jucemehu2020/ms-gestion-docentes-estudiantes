@@ -78,17 +78,23 @@ public class LineaInvestigacionServiceImpl implements LineaInvestigacionService 
     @Override
     @Transactional(readOnly = true)
     public List<LineaInvestigacionDto> Listar() {
-        List<LineaInvestigacion> lineas = lineaInvestigacionRepository.findAll();
+        // List<LineaInvestigacion> lineas = lineaInvestigacionRepository.findAll()
+        return lineaInvestigacionRepository.findAll()
+                .stream()
+                .map(linea -> crearLineaResposeDto(linea))
+                .toList();
 
-        return lineaInvestigacionMapper.toDtoList(lineas);
+        // return lineaInvestigacionMapper.toDtoList(lineas);
     }
 
     @Override
     @Transactional(readOnly = true)
 
     public Page<LineaInvestigacionDto> ListarPaginado(Pageable page) {
-        Page<LineaInvestigacion> lineas = lineaInvestigacionRepository.findAll(page);
-        return lineaInvestigacionMapper.toDtoPage(lineas);
+        Page<LineaInvestigacionDto> lineas = lineaInvestigacionRepository.findAll(page)
+            .map(this:: crearLineaResposeDto);
+
+        return lineas;
     }
 
     @Override
@@ -97,7 +103,7 @@ public class LineaInvestigacionServiceImpl implements LineaInvestigacionService 
         LineaInvestigacion linea = lineaInvestigacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Linea de investigación con " + id + "no encontrado"));
 
-        return lineaInvestigacionMapper.toDto(linea);
+        return crearLineaResposeDto(linea);
     }
 
     @Override
@@ -111,20 +117,26 @@ public class LineaInvestigacionServiceImpl implements LineaInvestigacionService 
         LineaInvestigacion lineaBD = lineaInvestigacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Linea de investigación no encontrada"));
 
+        CategoriaLinea  categoriaLinea = categoriaLineaRepository.findById(lineaInvestigacionSaveDto.getIdCategoria())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria de linea de investigación no encontrada"));
+        
         lineaBD.setTitulo(linea.getTitulo());
-        lineaBD.setCategoria(linea.getCategoria());
+        lineaBD.setCategoria(categoriaLinea);
         LineaInvestigacion lineaSave = lineaInvestigacionRepository.save(lineaBD);
-        return lineaInvestigacionMapper.toDto(lineaSave);
+        // LineaInvestigaciondto lineaDto=lineaInvestigacionMapper.toDto(lineaSave);
+        // lineaDto.setCategoria(categoriaLineasResponseMapper.toDto(categoriaLinea));   
+        return crearLineaResposeDto(lineaSave);
     }
 
     @Override
     @Transactional
-    public void ActualizarEstado(Long id) {
+    public String ActualizarEstado(Long id) {
         LineaInvestigacion linea = lineaInvestigacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Linea de investigación no encontrada"));
         EstadoPersona estado = linea.getEstado() == EstadoPersona.ACTIVO ? EstadoPersona.INACTIVO : EstadoPersona.ACTIVO;
         linea.setEstado(estado);
         lineaInvestigacionRepository.save(linea);
+        return "Estado actualizado a " + estado;
     }
 
     @Override
@@ -144,18 +156,27 @@ public class LineaInvestigacionServiceImpl implements LineaInvestigacionService 
         lineaInvestigacionRepository.save(linea);
 
     }
+    private LineaInvestigacionDto crearLineaResposeDto(LineaInvestigacion lineaInvestigacion ) {
 
-    private LineaInvestigacionDto crearLineaResposeDto(LineaInvestigacion lineaInvestigacion, Long idCategoria) {
-
-        CategoriaLinea categoria = categoriaLineaRepository.findById(idCategoria)
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria de linea de investigación no encontrada"));
 
         LineaInvestigacionDto lineaInvestigacionDto = lineaInvestigacionMapper.toDto(lineaInvestigacion);
-        CategoriaResponseDto categoriaDto = categoriaLineasResponseMapper.toDto(categoria);
+        CategoriaResponseDto categoriaDto = categoriaLineasResponseMapper.toDto(lineaInvestigacion.getCategoria());
         lineaInvestigacionDto.setCategoria(categoriaDto);
         return lineaInvestigacionDto;
 
     }
+
+    // private LineaInvestigacionDto crearLineaResposeDto(LineaInvestigacion lineaInvestigacion, Long idCategoria) {
+
+    //     CategoriaLinea categoria = categoriaLineaRepository.findById(idCategoria)
+    //             .orElseThrow(() -> new ResourceNotFoundException("Categoria de linea de investigación no encontrada"));
+
+    //     LineaInvestigacionDto lineaInvestigacionDto = lineaInvestigacionMapper.toDto(lineaInvestigacion);
+    //     CategoriaResponseDto categoriaDto = categoriaLineasResponseMapper.toDto(categoria);
+    //     lineaInvestigacionDto.setCategoria(categoriaDto);
+    //     return lineaInvestigacionDto;
+
+    // }
 
     private LineaInvestigacion crearLineaSaveDto(LineaInvestigacionSaveDto lineaInvestigacionSaveDto) {
         CategoriaLinea categoria = categoriaLineaRepository.findById(lineaInvestigacionSaveDto.getIdCategoria())

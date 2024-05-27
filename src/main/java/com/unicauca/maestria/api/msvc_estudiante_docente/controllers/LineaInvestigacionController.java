@@ -54,10 +54,10 @@ public class LineaInvestigacionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(lineaInvestigacionService.ActualizarLineaInvestigacion(id, LineaInvestigacion,result));
         
     }
+    
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<?> ActualizarEstado(@PathVariable Long id) {
-        lineaInvestigacionService.ActualizarEstado(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> ActualizarEstado(@PathVariable Long id) {
+        return ResponseEntity.ok(lineaInvestigacionService.ActualizarEstado(id));
     }
 
     @GetMapping

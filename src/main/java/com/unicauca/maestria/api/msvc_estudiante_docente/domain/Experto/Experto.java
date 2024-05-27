@@ -32,7 +32,7 @@ public class Experto {
 
     private String universidadtitexp;
 
-    private String copiadocidentidad;
+    private Long iddocidentidad;
 
     private String universidadexp;
 

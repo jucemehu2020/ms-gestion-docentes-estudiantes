@@ -20,7 +20,7 @@ public interface CategoriaLineaService {
     Page<CategoriaResponseDto> ListarPaginado(Pageable page);
     CategoriaResponseDto BuscarPorId(Long id);
     CategoriaResponseDto Actualizar(Long id, CategoriaSaveDto catedoriaSaveDto, BindingResult result);
-    void actualizarEstado(Long id);
+    String actualizarEstado(Long id);
     void EliminarFisico(Long id);
     void EliminarLogico(Long id);
     List<CategoriaResponseDto> ListarCategoriaActivos(String estado);
