@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,13 +29,19 @@ import com.unicauca.maestria.api.msvc_estudiante_docente.dtos.docente.DocenteSav
 import com.unicauca.maestria.api.msvc_estudiante_docente.services.docente.DocenteService;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/docentes")
 public class DocenteController {
 
 	
 	private final  DocenteService docenteService;
+
+
+	public DocenteController(
+		@Lazy DocenteService docenteService) {
+		this.docenteService = docenteService;
+	}
 	
 	@PostMapping
 	public ResponseEntity<DocenteResponseDto> crear(@Valid @RequestBody DocenteSaveDto docente,BindingResult result){
