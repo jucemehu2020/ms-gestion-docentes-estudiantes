@@ -50,7 +50,7 @@ public class ExpertoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(expertoService.Actualizar(id, expertoSaveDto, result));
     }
 
-    @GetMapping("/{id}/estado")
+    @PatchMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstado(@PathVariable Long id) {
         expertoService.actualizarEstado(id);
         return ResponseEntity.noContent().build();

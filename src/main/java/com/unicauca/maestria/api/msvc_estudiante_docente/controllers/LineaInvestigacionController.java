@@ -55,8 +55,8 @@ public class LineaInvestigacionController {
         
     }
     @PutMapping("/{id}/estado")
-    public ResponseEntity<?> ActualizarEstado(@PathVariable Long id, @RequestBody String estado) {
-        lineaInvestigacionService.ActualizarEstado(id, estado);
+    public ResponseEntity<?> ActualizarEstado(@PathVariable Long id) {
+        lineaInvestigacionService.ActualizarEstado(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -86,7 +86,7 @@ public class LineaInvestigacionController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/listar/{estado}")
+    @PatchMapping("/listar/{estado}")
     public ResponseEntity<List<LineaInvestigacionDto>> ListarEstado(@PathVariable String estado){
         return ResponseEntity.ok(lineaInvestigacionService.ListarEstado(estado));
     }

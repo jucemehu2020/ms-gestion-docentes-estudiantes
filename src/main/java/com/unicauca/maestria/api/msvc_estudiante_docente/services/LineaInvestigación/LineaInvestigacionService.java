@@ -21,7 +21,7 @@ public interface LineaInvestigacionService {
     LineaInvestigacionDto ActualizarLineaInvestigacion(Long id, LineaInvestigacionSaveDto lineaInvestigacionSaveDto,
             BindingResult result);
 
-    void ActualizarEstado(Long id, String estado);
+    void ActualizarEstado(Long id);
 
     LineaInvestigacionDto BuscarPorId(Long id);
 

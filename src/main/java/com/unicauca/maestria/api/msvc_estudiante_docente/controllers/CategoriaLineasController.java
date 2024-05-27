@@ -75,7 +75,7 @@ public class CategoriaLineasController {
         return ResponseEntity.ok(categoriaLineaService.BuscarPorId(id));
     }
 
-    @GetMapping("/listar/{estado}")
+    @PatchMapping("/listar/{estado}")
     public ResponseEntity<List<CategoriaResponseDto>> listarCategoriaActivos(@PathVariable String estado) {
         return ResponseEntity.ok(categoriaLineaService.ListarCategoriaActivos(estado));
     }

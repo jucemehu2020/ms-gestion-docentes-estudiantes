@@ -2,6 +2,7 @@ package com.unicauca.maestria.api.msvc_estudiante_docente.mappers.lineasInvestig
 
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
@@ -15,4 +16,7 @@ public interface LineaInvestigacionMapper extends GenericMapper<LineaInvestigaci
     // @Lazy
     // @Autowired
     // private  CategoriaResponseMapper categoriaResponseMapper;
+    @Override
+    @Mapping(target = "categoria", ignore = true)
+    LineaInvestigacionDto toDto(LineaInvestigacion entity);
 }

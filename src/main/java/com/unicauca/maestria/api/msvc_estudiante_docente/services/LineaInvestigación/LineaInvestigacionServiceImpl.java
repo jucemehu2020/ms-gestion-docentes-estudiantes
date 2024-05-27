@@ -119,10 +119,11 @@ public class LineaInvestigacionServiceImpl implements LineaInvestigacionService 
 
     @Override
     @Transactional
-    public void ActualizarEstado(Long id, String estado) {
+    public void ActualizarEstado(Long id) {
         LineaInvestigacion linea = lineaInvestigacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Linea de investigación no encontrada"));
-        linea.setEstado(EstadoPersona.valueOf(estado));
+        EstadoPersona estado = linea.getEstado() == EstadoPersona.ACTIVO ? EstadoPersona.INACTIVO : EstadoPersona.ACTIVO;
+        linea.setEstado(estado);
         lineaInvestigacionRepository.save(linea);
     }
 
