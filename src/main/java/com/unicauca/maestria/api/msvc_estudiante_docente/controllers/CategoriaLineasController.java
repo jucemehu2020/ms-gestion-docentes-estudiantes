@@ -53,7 +53,7 @@ public class CategoriaLineasController {
 
     }
 
-    @GetMapping("/{id}/estado")
+    @PatchMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstado(@PathVariable Long id) {
         categoriaLineaService.actualizarEstado(id);
         return ResponseEntity.noContent().build();
@@ -75,7 +75,7 @@ public class CategoriaLineasController {
         return ResponseEntity.ok(categoriaLineaService.BuscarPorId(id));
     }
 
-    @PatchMapping("/listar/{estado}")
+    @GetMapping("/listar/{estado}")
     public ResponseEntity<List<CategoriaResponseDto>> listarCategoriaActivos(@PathVariable String estado) {
         return ResponseEntity.ok(categoriaLineaService.ListarCategoriaActivos(estado));
     }
