@@ -35,6 +35,8 @@ public class LineaInvestigacion {
 
 	private String titulo;
 
+	private String descripcion;
+
 	@ManyToOne
 	@JoinColumn(name = "id_categoria")
 	private CategoriaLinea categoria;

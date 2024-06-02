@@ -17,6 +17,7 @@ public class CategoriaResponseDto {
 
     private String nombre;
     private Long id;
+    private String descripcion;
     private EstadoPersona estado;
     private List<LineaInvestigacionDto> lineasInvestigacion;
 

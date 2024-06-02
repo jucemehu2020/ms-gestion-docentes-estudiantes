@@ -34,6 +34,8 @@ public class CategoriaLinea {
 
     private String nombre;
 
+    private String descripcion;
+
     @Enumerated(EnumType.STRING)
     private EstadoPersona estado;
 

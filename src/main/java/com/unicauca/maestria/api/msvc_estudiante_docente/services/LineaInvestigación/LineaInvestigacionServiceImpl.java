@@ -46,19 +46,7 @@ public class LineaInvestigacionServiceImpl implements LineaInvestigacionService 
     @Autowired
     private  CategoriaLineasRepository categoriaLineaRepository;
 
-    // @Autowired
-    // public LineaInvestigacionServiceImpl(
-    //         LineaInvestigacionRepository lineaInvestigacionRepository,
-    //         LineaInvestigacionSaveMapper lineaInvestigacionSaveMapper,
-    //         @Lazy LineaInvestigacionMapper lineaInvestigacionResponseMapper,
-    //         CategoriaLineasRepository categoriaRepository,
-    //         @Lazy CategoriaResponseMapper categoriaLineasResponseMapper) {
-    //     this.lineaInvestigacionRepository = lineaInvestigacionRepository;
-    //     this.lineaInvestigacionSaveMapper = lineaInvestigacionSaveMapper;
-    //     this.lineaInvestigacionMapper = lineaInvestigacionResponseMapper;
-    //     this.categoriaLineaRepository = categoriaRepository;
-    //     this.categoriaLineasResponseMapper = categoriaLineasResponseMapper;
-    // }
+    
 
     @Override
     @Transactional

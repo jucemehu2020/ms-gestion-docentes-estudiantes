@@ -18,6 +18,9 @@ public class CategoriaSaveDto {
     @Valid
     private String nombre;
 
+    @Size(max = 255)
+    private String descripcion;
+
     private EstadoPersona estado;
 
     public CategoriaSaveDto() {

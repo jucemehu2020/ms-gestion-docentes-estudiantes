@@ -19,6 +19,9 @@ public class LineaInvestigacionSaveDto {
     private String titulo;
     @NotNull
     private Long idCategoria;
+
+    @Size(max = 255)
+    private String descripcion;
     
     private EstadoPersona estado;
     

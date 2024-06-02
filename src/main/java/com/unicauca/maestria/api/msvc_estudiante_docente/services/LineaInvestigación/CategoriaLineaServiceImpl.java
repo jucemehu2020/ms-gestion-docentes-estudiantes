@@ -61,21 +61,7 @@ public class CategoriaLineaServiceImpl implements CategoriaLineaService {
     @Autowired
     private  LineaInvestigacionMapper lineaInvestigacionMapper;
 
-    // @Autowired
-    // public CategoriaLineaServiceImpl(
-    //         CategoriaLineasRepository categoriaRepository,
-    //         CategoriaSaveMapper categoriaSaveMapper,
-    //         @Lazy CategoriaResponseMapper categoriaResponseMapper,
-    //         InformacionUnicaCategoria informacionUnicaCategoria,
-    //         @Lazy LineaInvestigacionMapper lineaInvestigacionMapper,
-    //         LineaInvestigacionRepository lineaInvestigacionRepository) {
-    //     this.categoriaRepository = categoriaRepository;
-    //     this.categoriaSaveMapper = categoriaSaveMapper;
-    //     this.categoriaResponseMapper = categoriaResponseMapper;
-    //     this.informacionUnicaCategoria = informacionUnicaCategoria;
-    //     this.lineaInvestigacionMapper = lineaInvestigacionMapper;
-    //     this.lineaInvestigacionRepository = lineaInvestigacionRepository;
-    // }
+    
 
     @Override
     @Transactional
@@ -159,6 +145,11 @@ public class CategoriaLineaServiceImpl implements CategoriaLineaService {
         EstadoPersona estado = categoria.getEstado() == EstadoPersona.ACTIVO ? EstadoPersona.INACTIVO : EstadoPersona.ACTIVO;
         categoria.setEstado(estado);
         categoriaRepository.save(categoria);
+        if(estado == EstadoPersona.INACTIVO){
+            actualizarEstadoLineasInvestigacion(categoria, estado);
+        }
+            
+       
         return "Estado actualizado a " + estado;
     }
 
@@ -236,15 +227,13 @@ public class CategoriaLineaServiceImpl implements CategoriaLineaService {
         return categoriaResponseDto;
     }
 
-    // private void actualizarinformacionCategoria(CategoriaLineaInvestigacion
-    // categoria,
-    // CategoriaLineaInvestigacion categoriaBD) {
-
-    // // falta agregar id de categoria
-    // categoriaBD.setNombre(categoria.getNombre());
-    // categoriaBD.setEstado(categoria.getEstado());
-
-    // }
+    private void actualizarEstadoLineasInvestigacion(CategoriaLinea categoria, EstadoPersona estado) {
+        List<LineaInvestigacion> lineasInvestigacion = lineaInvestigacionRepository.findAllByCategoriaId(categoria.getId());
+        lineasInvestigacion.forEach(linea -> {
+            linea.setEstado(estado);
+            lineaInvestigacionRepository.save(linea);
+        });
+    }
 
     @Override
     public List<CategoriaResponseDto> ListarCategoriaActivos(String estado) {

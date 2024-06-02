@@ -15,6 +15,8 @@ public class LineaInvestigacionDto {
 	private Long id;
 	
 	private String titulo;
+
+	private String descripcion;
 	
 	private CategoriaResponseDto categoria;
 
