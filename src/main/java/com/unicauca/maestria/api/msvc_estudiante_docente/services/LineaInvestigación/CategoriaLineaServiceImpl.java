@@ -179,6 +179,8 @@ public class CategoriaLineaServiceImpl implements CategoriaLineaService {
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la categoria con el id: "));
         categoria.setEstado(EstadoPersona.INACTIVO);
         categoriaRepository.save(categoria);
+        actualizarEstadoLineasInvestigacion(categoria,EstadoPersona.INACTIVO);
+        
     }
 
     private Map<String, String> validacionCampoUnicos(CamposUnicosCategoriaDto camposUnicos,
