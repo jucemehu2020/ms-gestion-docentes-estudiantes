@@ -109,6 +109,7 @@ public class LineaInvestigacionServiceImpl implements LineaInvestigacionService 
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria de linea de investigación no encontrada"));
         
         lineaBD.setTitulo(linea.getTitulo());
+        lineaBD.setDescripcion(linea.getDescripcion());
         lineaBD.setCategoria(categoriaLinea);
         LineaInvestigacion lineaSave = lineaInvestigacionRepository.save(lineaBD);
         // LineaInvestigaciondto lineaDto=lineaInvestigacionMapper.toDto(lineaSave);
